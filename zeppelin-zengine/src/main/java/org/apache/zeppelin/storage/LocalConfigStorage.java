@@ -35,6 +35,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.FileSystem;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Scanner;
 
 /**
  * Storing config in local file system
@@ -67,7 +68,7 @@ public class LocalConfigStorage extends ConfigStorage {
       return null;
     }
     LOGGER.info("Load Interpreter Setting from file: " + interpreterSettingPath);
-    String json = readFromFile(interpreterSettingPath);
+    String json = readFromLocalStoreFile(interpreterSettingPath);
     return buildInterpreterInfoSaving(json);
   }
 
@@ -110,6 +111,22 @@ public class LocalConfigStorage extends ConfigStorage {
       return IOUtils.toString(is);
     }
   }
+
+  private String readFromLocalStoreFile(File file) throws IOException {
+    Scanner sc = new Scanner(file);
+    StringBuffer sb = new StringBuffer();
+
+    try {
+      while (sc.hasNextLine())
+        sb.append(sc.nextLine());
+    }
+    finally {
+      sc.close();
+    }
+
+    return sb.toString();
+  }
+
 
   @VisibleForTesting
   static void atomicWriteToFile(String content, File file) throws IOException {
